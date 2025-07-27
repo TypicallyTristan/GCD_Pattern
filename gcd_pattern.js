@@ -18,12 +18,20 @@ let examplePatternSteps = {
 //
 function getGCDStep(xCount, oCount) {}
 
-// Given an array of arrays, concatenate through the index 0 to length of the array of the subarrays
+// Given an array of strings, concatenate through the index 0 to length of the array of the strings
+// ex: ["XX", "OO"] will concatenate to ["XOXO"]
 function concatenatePattern(patternStep) {
-  let result = [];
-    for (let row in patternStep) {
-      console.log(patternStep[row][0]);
+  const maxColLength = Math.max(...patternStep.map((row) => row.length));
+  let result = "";
+
+  for (let col = 0; col < maxColLength; col++) {
+    for (let row = 0; row < patternStep.length; row++) {
+      if (patternStep[row][col] !== undefined) {
+        result += patternStep[row][col];
+      }
     }
+  }
+
   return result;
 }
 
