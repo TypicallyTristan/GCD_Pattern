@@ -15,7 +15,14 @@ let examplePatternSteps = {
 
 // Uses Euclids algorithm to find the values of each step
 // a = b * q + r where a is the larger number, b is the smaller number, q is the quotient, and r is the remainder
-function getGCDStep(xCount, oCount) {}
+function getGCDStep(xCount, oCount) {
+    let a = Math.max(xCount, oCount);
+    let b = Math.min(xCount, oCount);
+    let r = a % b;
+    let q = (a - r) / b;
+
+    console.log(`GCD Step: a=${a}, b=${b}, q=${q}, r=${r}`);
+}
 
 // Given an array of strings, concatenate through the index 0 to length of the array of the strings
 // ex: ["XX", "OO"] will concatenate to ["XOXO"]
@@ -42,17 +49,26 @@ function printStep(step) {
 
 function main() {
   readline.question(
-    "Enter number of X's and Y's separated by space: ",
+    "Enter number of X's and O's separated by space: ",
     (input) => {
       const [xCount, oCount] = input.split(" ").map(Number);
       if (isNaN(xCount) || isNaN(oCount)) {
         console.log("Please enter valid numbers.");
       } else {
+        // Process the input here
+        console.log(`Processing ${xCount} X's and ${oCount} O's`);
+        console.log("GCD Step:");
+        getGCDStep(xCount, oCount);
+        console.log(concatenatePattern(examplePatternSteps.step3));
       }
       readline.close();
     }
   );
-  console.log(concatenatePattern(examplePatternSteps.step3));
 }
 
 main();
+
+
+// first step must be that a is the total number of X's and O's
+// b is the larger of X and O numbers
+// Create 1 row of X's and O's with 'a' columns (strlength)
