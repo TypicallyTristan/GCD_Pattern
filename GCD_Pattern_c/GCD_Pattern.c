@@ -33,24 +33,24 @@ int main() {
     make_chars(result, 'X', numX); // Fills beginning with X's
     make_chars(result + numX, '0', num0); // Fills Rest with 0's
 
+    
 
     int current_line_count = 0;
     int num_sum = numX + num0;
-    const int line_limit = num_sum; 
+    int line_limit = numX; 
 
-   
+    int GCD_remainder = num_sum % num0;
+    int GCD_quotient = numX / num0;
+    int GCD_sum = numX / num0 + GCD_remainder;
 
     for(int i = 0; i < num_sum; i++) // Print out X's and 0's until desired amount.
     {
-        putchar(result[i]);
-
         current_line_count += 1; // Tracks number of X's and 0's printed.
-
-        if (current_line_count == line_limit) // Check if line limit has been reached.
-        {
+        if (current_line_count > numX) // Check if line limit has been reached. // Right now being set to num0 the program works properly only if 0's are greater than X's.
+        {                              // Current goal is to find a way to make the geater of either nums always be the on that is in this line.
             printf("\n");
             current_line_count = 0; // Reset counter for new line.
         }
-
+        putchar(result[i]);
     }
 }    
