@@ -27,6 +27,12 @@ function concatenatePattern(patternStep) {
   return result;
 }
 
+function printStep(step) {
+  for (let row of step) {
+    console.log(row[0]);
+  }
+}
+
 function main() {
   readline.question(
     "Enter number of X's and Y's separated by space: ",
