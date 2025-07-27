@@ -49,7 +49,7 @@ int main() {
         if (current_line_count == line_limit) // Check if line limit has been reached.
         {
             printf("\n");
-            current_chars = 0; // Reset counter for new line.
+            current_line_count = 0; // Reset counter for new line.
         }
 
     }
