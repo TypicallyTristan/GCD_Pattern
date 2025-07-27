@@ -29,7 +29,7 @@ function concatenatePattern(patternStep) {
 
 function printStep(step) {
   for (let row of step) {
-    console.log(row[0]);
+    console.log(row);
   }
 }
 
