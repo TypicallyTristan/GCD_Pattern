@@ -34,12 +34,23 @@ int main() {
     make_chars(result + numX, '0', num0); // Fills Rest with 0's
 
 
-    
+    int current_line_count = 0;
+    int num_sum = numX + num0;
+    const int line_limit = num_sum; 
 
-    // if a less than b swap values
-    int charLimit = numX + num0;
+   
 
-    for(int i = 0; i < charLimit; i++) {
-     putchar(result[i]);
+    for(int i = 0; i < num_sum; i++) // Print out X's and 0's until desired amount.
+    {
+        putchar(result[i]);
+
+        current_line_count += 1; // Tracks number of X's and 0's printed.
+
+        if (current_line_count == line_limit) // Check if line limit has been reached.
+        {
+            printf("\n");
+            current_chars = 0; // Reset counter for new line.
+        }
+
     }
-}
+}    
