@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
+// Euclid's Algorithm states that if a is the sum of two given numbers and b is the largest of those two numbers and r is the smallest then a / b = a = b * q + r.
+// If we continuosly move over the b value to the a value and r value to the b value until r = 0 then we will have found the GCD of those two given numbers.
+// For this program though we will be stopping once r = 1.
+
 int calculateGcd (int a, int b)
 {
 while(b != 0) {
@@ -25,7 +29,21 @@ int main() {
     printf("How many X's?: ");
     scanf("%d", &numX);
     printf("How many 0's?: ");
-    scanf("%d", &num0);
+    scanf("%d", &num0);  
+    
+    int GCD_b; // Makes sure the b always is the greater of the two numbers
+    if(numX > num0)
+    {
+        GCD_b = numX;
+    }
+    else
+    {
+        GCD_b = num0;
+    }
+    int GCD_a = numX + num0;
+    int GCD_r = GCD_a % GCD_b;
+    int GCD_q = numX / num0;
+
 
     // Create a checker for if the number is negative and not an integer
 
@@ -33,24 +51,18 @@ int main() {
     make_chars(result, 'X', numX); // Fills beginning with X's
     make_chars(result + numX, '0', num0); // Fills Rest with 0's
 
-
     int current_line_count = 0;
-    int num_sum = numX + num0;
-    const int line_limit = num_sum; 
+    int line_limit = GCD_b; 
 
-   
 
-    for(int i = 0; i < num_sum; i++) // Print out X's and 0's until desired amount.
+    for(int i = 0; i < GCD_a; i++) // Print out X's and 0's until desired amount.
     {
-        putchar(result[i]);
-
         current_line_count += 1; // Tracks number of X's and 0's printed.
-
-        if (current_line_count == line_limit) // Check if line limit has been reached.
-        {
+        if (current_line_count > GCD_b) // Check if line limit has been reached.
+        {                              
             printf("\n");
             current_line_count = 0; // Reset counter for new line.
         }
-
+        putchar(result[i]);
     }
 }    
