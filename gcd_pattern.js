@@ -47,6 +47,30 @@ function printStep(step) {
   }
 }
 
+function moveColumns(patternStep) {
+  if (patternStep.length <= 1) {
+    const xCount = patternStep[0].match(/X/g)?.length || 0;
+    const oCount = patternStep[0].match(/O/g)?.length || 0;
+
+    return [
+      patternStep[0].slice(0, Math.max(xCount, oCount)),
+      patternStep[0].slice(-Math.min(xCount, oCount)),
+    ];
+  }
+}
+
+function getRowLengthDifference(patternStep) {
+  const longestRow = patternStep.reduce(
+    (max, row) => Math.max(max, row.length),
+    0
+  );
+  const shortestRow = patternStep.reduce(
+    (min, row) => Math.min(min, row.length),
+    Infinity
+  );
+  return longestRow - shortestRow;
+}
+
 function main() {
   readline.question(
     "Enter number of X's and O's separated by space: ",
@@ -58,8 +82,7 @@ function main() {
         // Process the input here
         console.log(`Processing ${xCount} X's and ${oCount} O's`);
         console.log("GCD Step:");
-        getGCDStep(xCount, oCount);
-        console.log(concatenatePattern(examplePatternSteps.step3));
+        console.log(moveColumns(examplePatternSteps.step1));
       }
       readline.close();
     }
@@ -68,7 +91,13 @@ function main() {
 
 main();
 
-
 // first step must be that a is the total number of X's and O's
 // b is the larger of X and O numbers
 // Create 1 row of X's and O's with 'a' columns (strlength)
+
+/*
+ const lengths = patternStep.map(row => row.length);
+  const minLength = Math.min(...lengths);
+  const maxLength = Math.max(...lengths);
+  return maxLength - minLength;
+*/
