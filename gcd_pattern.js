@@ -41,12 +41,14 @@ function printStep(step) {
 function moveColumns(patternStep) {
   // When there is only one row split the row into two parts
   if (patternStep.length <= 1) {
+    printStep(patternStep);
     const xCount = patternStep[0].match(/X/g)?.length || 0;
     const oCount = patternStep[0].match(/O/g)?.length || 0;
     patternStep = [
       patternStep[0].slice(0, Math.max(xCount, oCount)),
       patternStep[0].slice(-Math.min(xCount, oCount)),
     ];
+    printStep(patternStep);
     moveColumns(patternStep);
   }
 
@@ -74,8 +76,10 @@ function moveColumns(patternStep) {
       }
     });
 
+    printStep(patternStep);
     moveColumns(patternStep);
   }
+
   return patternStep;
 }
 
@@ -110,8 +114,8 @@ function main() {
         }
 
         const finalPattern = moveColumns([initialRow]);
-        printStep(finalPattern);
-        console.log(concatenatePattern(finalPattern));
+
+        console.log("Final result: " + concatenatePattern(finalPattern));
       }
       readline.close();
     }
