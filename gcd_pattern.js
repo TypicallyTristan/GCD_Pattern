@@ -108,11 +108,12 @@ function main() {
         readline.question("Print steps? (yes/no): ", (printStepsInput) => {
           const printSteps = printStepsInput.toLowerCase() === "yes";
           console.log(`Processing ${xCount} X's and ${oCount} O's`);
+
           let initialRow = "";
-          for (i = 0; i < xCount; i++) {
+          for (let i = 0; i < xCount; i++) {
             initialRow += "X";
           }
-          for (i = 0; i < oCount; i++) {
+          for (let i = 0; i < oCount; i++) {
             initialRow += "O";
           }
 
