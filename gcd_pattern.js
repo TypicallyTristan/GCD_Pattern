@@ -38,18 +38,18 @@ function printStep(step) {
   console.log("-----");
 }
 
-function moveColumns(patternStep) {
+function moveColumns(patternStep, printSteps) {
   // When there is only one row split the row into two parts
   if (patternStep.length <= 1) {
-    printStep(patternStep);
+    if (printSteps) printStep(patternStep);
     const xCount = patternStep[0].match(/X/g)?.length || 0;
     const oCount = patternStep[0].match(/O/g)?.length || 0;
     patternStep = [
       patternStep[0].slice(0, Math.max(xCount, oCount)),
       patternStep[0].slice(-Math.min(xCount, oCount)),
     ];
-    printStep(patternStep);
-    moveColumns(patternStep);
+    if (printSteps) printStep(patternStep);
+    return moveColumns(patternStep, printSteps);
   }
 
   const difference = getRowLengthDifference(patternStep);
@@ -61,26 +61,27 @@ function moveColumns(patternStep) {
   if (difference <= 1) {
     return patternStep;
   } else {
-    patternStep.forEach((row, index) => {
+    const newPattern = [...patternStep];
+    const additions = [];
+    newPattern.forEach((row, index) => {
       if (row.length > shortestRowLength) {
-        const trimmedRow = patternStep[index].substring(
+        const trimmedRow = newPattern[index].substring(
           0,
           Math.max(shortestRowLength, difference)
         );
-        const cutOffCharacters = patternStep[index].substring(
+        const cutOffCharacters = newPattern[index].substring(
           Math.max(shortestRowLength, difference)
         );
 
-        patternStep[index] = trimmedRow;
-        patternStep.push(cutOffCharacters);
+        newPattern[index] = trimmedRow;
+        additions.push(cutOffCharacters);
       }
     });
 
-    printStep(patternStep);
-    moveColumns(patternStep);
+    const finalPattern = newPattern.concat(additions);
+    if (printSteps) printStep(finalPattern);
+    return moveColumns(finalPattern, printSteps);
   }
-
-  return patternStep;
 }
 
 function getRowLengthDifference(patternStep) {
@@ -102,22 +103,25 @@ function main() {
       const [xCount, oCount] = input.split(" ").map(Number);
       if (isNaN(xCount) || isNaN(oCount)) {
         console.log("Please enter valid numbers.");
+        readline.close();
       } else {
-        // Process the input here
-        console.log(`Processing ${xCount} X's and ${oCount} O's`);
-        let initialRow = "";
-        for (i = 0; i < xCount; i++) {
-          initialRow += "X";
-        }
-        for (i = 0; i < oCount; i++) {
-          initialRow += "O";
-        }
+        readline.question("Print steps? (yes/no): ", (printStepsInput) => {
+          const printSteps = printStepsInput.toLowerCase() === "yes";
+          console.log(`Processing ${xCount} X's and ${oCount} O's`);
+          let initialRow = "";
+          for (i = 0; i < xCount; i++) {
+            initialRow += "X";
+          }
+          for (i = 0; i < oCount; i++) {
+            initialRow += "O";
+          }
 
-        const finalPattern = moveColumns([initialRow]);
+          const finalPattern = moveColumns([initialRow], printSteps);
 
-        console.log("Final result: " + concatenatePattern(finalPattern));
+          console.log("Final result: " + concatenatePattern(finalPattern));
+          readline.close();
+        });
       }
-      readline.close();
     }
   );
 }
