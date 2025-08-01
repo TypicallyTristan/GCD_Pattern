@@ -35,6 +35,7 @@ function printStep(step) {
   for (let row of step) {
     console.log(row);
   }
+  console.log("-----");
 }
 
 function moveColumns(patternStep) {
