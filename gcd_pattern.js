@@ -48,15 +48,44 @@ function printStep(step) {
 }
 
 function moveColumns(patternStep) {
+  // When there is only one row split the row into two parts
   if (patternStep.length <= 1) {
     const xCount = patternStep[0].match(/X/g)?.length || 0;
     const oCount = patternStep[0].match(/O/g)?.length || 0;
-
-    return [
+    patternStep = [
       patternStep[0].slice(0, Math.max(xCount, oCount)),
       patternStep[0].slice(-Math.min(xCount, oCount)),
     ];
+    moveColumns(patternStep);
   }
+
+  const difference = getRowLengthDifference(patternStep);
+  const shortestRowLength = patternStep.reduce(
+    (min, row) => Math.min(min, row.length),
+    Infinity
+  );
+
+  if (difference <= 1) {
+    return patternStep;
+  } else {
+    patternStep.forEach((row, index) => {
+      if (row.length > shortestRowLength) {
+        const trimmedRow = patternStep[index].substring(
+          0,
+          Math.max(shortestRowLength, difference)
+        );
+        const cutOffCharacters = patternStep[index].substring(
+          Math.max(shortestRowLength, difference)
+        );
+
+        patternStep[index] = trimmedRow;
+        patternStep.push(cutOffCharacters);
+      }
+    });
+
+    moveColumns(patternStep);
+  }
+  return patternStep;
 }
 
 function getRowLengthDifference(patternStep) {
