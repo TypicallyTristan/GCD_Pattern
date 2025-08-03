@@ -3,27 +3,6 @@ const readline = require("readline").createInterface({
   output: process.stdout,
 });
 
-// length of the pattern arr = the number of rows in the pattern
-// each row is an array of strings, where each string is a pattern of X's and O's
-let examplePatternSteps = {
-  // Example pattern for 5 X's and 7 O's
-  step1: ["XXXXXOOOOOOO"],
-  step2: ["XXXXXOO", "OOOOO"],
-  step3: ["XXX", "OOO", "OO", "XX", "OO"],
-  // Then concat the whole patter by getting the first index of each row
-};
-
-// Uses Euclids algorithm to find the values of each step
-// a = b * q + r where a is the larger number, b is the smaller number, q is the quotient, and r is the remainder
-function getGCDStep(xCount, oCount) {
-    let a = Math.max(xCount, oCount);
-    let b = Math.min(xCount, oCount);
-    let r = a % b;
-    let q = (a - r) / b;
-
-    console.log(`GCD Step: a=${a}, b=${b}, q=${q}, r=${r}`);
-}
-
 // Given an array of strings, concatenate through the index 0 to length of the array of the strings
 // ex: ["XX", "OO"] will concatenate to ["XOXO"]
 function concatenatePattern(patternStep) {
@@ -45,6 +24,65 @@ function printStep(step) {
   for (let row of step) {
     console.log(row);
   }
+  console.log("-----");
+}
+
+function moveColumns(patternStep, printSteps) {
+  // When there is only one row split the row into two parts
+  if (patternStep.length <= 1) {
+    if (printSteps) printStep(patternStep);
+    const xCount = patternStep[0].match(/X/g)?.length || 0;
+    const oCount = patternStep[0].match(/O/g)?.length || 0;
+    patternStep = [
+      patternStep[0].slice(0, Math.max(xCount, oCount)),
+      patternStep[0].slice(-Math.min(xCount, oCount)),
+    ];
+    if (printSteps) printStep(patternStep);
+    return moveColumns(patternStep, printSteps);
+  }
+
+  const difference = getRowLengthDifference(patternStep);
+  const shortestRowLength = patternStep.reduce(
+    (min, row) => Math.min(min, row.length),
+    Infinity
+  );
+
+  if (difference <= 1) {
+    return patternStep;
+  } else {
+    const newPattern = [...patternStep];
+    const additions = [];
+    newPattern.forEach((row, index) => {
+      if (row.length > shortestRowLength) {
+        const trimmedRow = newPattern[index].substring(
+          0,
+          Math.max(shortestRowLength, difference)
+        );
+        const cutOffCharacters = newPattern[index].substring(
+          Math.max(shortestRowLength, difference)
+        );
+
+        newPattern[index] = trimmedRow;
+        additions.push(cutOffCharacters);
+      }
+    });
+
+    const finalPattern = newPattern.concat(additions);
+    if (printSteps) printStep(finalPattern);
+    return moveColumns(finalPattern, printSteps);
+  }
+}
+
+function getRowLengthDifference(patternStep) {
+  const longestRow = patternStep.reduce(
+    (max, row) => Math.max(max, row.length),
+    0
+  );
+  const shortestRow = patternStep.reduce(
+    (min, row) => Math.min(min, row.length),
+    Infinity
+  );
+  return longestRow - shortestRow;
 }
 
 function main() {
@@ -54,21 +92,28 @@ function main() {
       const [xCount, oCount] = input.split(" ").map(Number);
       if (isNaN(xCount) || isNaN(oCount)) {
         console.log("Please enter valid numbers.");
+        readline.close();
       } else {
-        // Process the input here
-        console.log(`Processing ${xCount} X's and ${oCount} O's`);
-        console.log("GCD Step:");
-        getGCDStep(xCount, oCount);
-        console.log(concatenatePattern(examplePatternSteps.step3));
+        readline.question("Print steps? (yes/no): ", (printStepsInput) => {
+          const printSteps = printStepsInput.toLowerCase() === "yes";
+          console.log(`Processing ${xCount} X's and ${oCount} O's`);
+
+          let initialRow = "";
+          for (let i = 0; i < xCount; i++) {
+            initialRow += "X";
+          }
+          for (let i = 0; i < oCount; i++) {
+            initialRow += "O";
+          }
+
+          const finalPattern = moveColumns([initialRow], printSteps);
+
+          console.log("Final result: " + concatenatePattern(finalPattern));
+          readline.close();
+        });
       }
-      readline.close();
     }
   );
 }
 
 main();
-
-
-// first step must be that a is the total number of X's and O's
-// b is the larger of X and O numbers
-// Create 1 row of X's and O's with 'a' columns (strlength)
