@@ -1,19 +1,10 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 // Euclid's Algorithm states that if a is the sum of two given numbers and b is the largest of those two numbers and r is the smallest then a / b = a = b * q + r.
 // If we continuosly move over the b value to the a value and r value to the b value until r = 0 then we will have found the GCD of those two given numbers.
 // For this program though we will be stopping once r = 1.
-
-int calculateGcd (int a, int b)
-{
-while(b != 0) {
-    int r = a % b; // Calculate remainder
-    a = b;         // Change value of a to b
-    b = r;         // Change value of b to r
-}
-return a;          // Return GCD
-}
 
 make_chars(char *buffer, char c, int count) { 
     for(int i = 0; i < count; i++) {
@@ -30,7 +21,7 @@ int main() {
     scanf("%d", &numX);
     printf("How many 0's?: ");
     scanf("%d", &num0);  
-    
+
     int GCD_b; // Makes sure the b always is the greater of the two numbers
     if(numX > num0)
     {
@@ -40,20 +31,28 @@ int main() {
     {
         GCD_b = num0;
     }
+
+    int GCD_s; // Finds smallest number.
+    if(numX < num0)
+    {
+        GCD_s = numX;
+    } else {
+        GCD_s = num0;
+    }
+
     int GCD_a = numX + num0;
-    int GCD_r = GCD_a % GCD_b;
+    int GCD_r = GCD_b % GCD_s;
     int GCD_q = numX / num0;
 
 
     // Create a checker for if the number is negative and not an integer
 
-    char result[100]; // Making sure there's enough room to store 
+
+    char *result = malloc(GCD_a + 1); // Making sure there's enough room to store 
     make_chars(result, 'X', numX); // Fills beginning with X's
     make_chars(result + numX, '0', num0); // Fills Rest with 0's
 
     int current_line_count = 0;
-    int line_limit = GCD_b; 
-
 
     for(int i = 0; i < GCD_a; i++) // Print out X's and 0's until desired amount.
     {
@@ -63,6 +62,7 @@ int main() {
             printf("\n");
             current_line_count = 0; // Reset counter for new line.
         }
-        putchar(result[i]);
+        putchar(result[i]);   
     }
+    free(result);
 }    
