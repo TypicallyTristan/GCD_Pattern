@@ -13,8 +13,9 @@ typedef struct {
 Pattern createBalancedPattern(int numX, int num0);
 char* concatenateFinalPattern(const Pattern *pattern);
 int getRowLengthDifference(const Pattern *pattern);
-int max(int a, int b);
-int min(int a, int b);
+void free_pattern(Pattern *p);
+int find_max(int a, int b);
+int find_min(int a, int b);
 
 int main() { 
     int numX, num0;
@@ -30,6 +31,12 @@ int main() {
         return 1;
     } 
 
+    Pattern final_pattern = createBalancedPattern(numX, num0);
+
+    char *result = concatenateFinalPattern(&final_pattern);
+
+    printf("\nFinal Result: %s\n", result);
+
 }    
 
 
@@ -42,13 +49,13 @@ Pattern createBalancedPattern(int numX, int num0) {
     p.num_rows = 2;
     p.rows = malloc(p.num_rows * sizeof(char*));
 
-    int max_count = max(numX, num0);
-    int min_count = min(numX, num0);
-    char* max_char = (numX > num0) ? 'X' : '0';
-    char* min_char = (numX < num0) ? 'X' : '0';
+    int max_count = find_max(numX, num0);
+    int min_count = find_min(numX, num0);
+    char max_char = (numX > num0) ? 'X' : '0';
+    char min_char = (numX < num0) ? 'X' : '0';
 
     p.rows[0] = malloc(max_count + 1);
-    p.rows[1] = malloc(min_char + 1);
+    p.rows[1] = malloc(min_count + 1);
     memset(p.rows[0], max_char, max_count);
     p.rows[0][max_count] = '\0';
     memset(p.rows[1], min_char, min_count);
@@ -58,14 +65,14 @@ Pattern createBalancedPattern(int numX, int num0) {
     while (getRowLengthDifference(&p) > 1) {
         int shortest = INT_MAX;
         for (int i = 0; i < p.num_rows; i++) { // Finds the length of the shortest row
-            shortest = min(shortest, strlen(p.rows[i]));
+            shortest = find_min(shortest, strlen(p.rows[i]));
         }
         int difference = getRowLengthDifference(&p);
 
         
         int additions_count = 0;
         for (int i = 0; i < p.num_rows; i++) { // Counts how many rows are longer than the shortest
-            if (strlen(p.num_rows > shortest)) {
+            if (strlen(p.rows[i]) > shortest) {
                 additions_count++;
             }
         }
@@ -74,22 +81,22 @@ Pattern createBalancedPattern(int numX, int num0) {
         int new_num_row = p.num_rows + additions_count;
         Pattern new_p;
         new_p.num_rows = new_num_row;
-        new_p.num_rows = malloc(new_num_row * sizeof(char*));
+        new_p.rows = malloc(new_num_row * sizeof(char*));
 
         int addition_idx = 0;
-        int trimp_point = max(shortest, difference); // Calculates the new lenght for the long rows we trim
+        int trimp_point = find_max(shortest, difference); // Calculates the new lenght for the long rows we trim
 
         for (int i = 0; i < p.num_rows; i++) { // Iterates through old pattern p and builds new pattern
             int current_len = strlen(p.rows[i]);
             if (current_len > shortest) {
                 // This row is too long so we trim it
                 new_p.rows[i] = malloc(trimp_point + 1);
-                strncpy(new_p.rows, p.rows[i], trimp_point);
+                strncpy(new_p.rows[i], p.rows[i], trimp_point);
                 new_p.rows[i][trimp_point] = '\0';
 
                 // Creates new row from trim
                 int cut_off_len = current_len - trimp_point;
-                new_p.rows[p.num_rows + addition_idx] = malloc(current_len + 1);
+                new_p.rows[p.num_rows + addition_idx] = malloc(cut_off_len + 1);
                 strcpy(new_p.rows[p.num_rows + addition_idx], p.rows[i] + trimp_point);
                 addition_idx++;
                 } else { // If row was already short enough
@@ -148,5 +155,14 @@ int getRowLengthDifference(const Pattern *pattern) {
     return longest - shortest;
 }
 
-int max(int a, int b) { return (a > b) ? a : b; }  // Finds largest number
-int min(int a, int b) { return (a < b) ? a : b; }  // Finds smallest number
+void free_pattern(Pattern *p) {
+    if (!p || !p->rows) return;
+    for (int i = 0; i < p->num_rows; i++) {
+        free(p->rows);
+        p->rows = NULL;
+        p->num_rows = 0;
+    }
+}
+
+int find_max(int a, int b) { return (a > b) ? a : b; }  // Finds largest number
+int find_min(int a, int b) { return (a < b) ? a : b; }  // Finds smallest number
