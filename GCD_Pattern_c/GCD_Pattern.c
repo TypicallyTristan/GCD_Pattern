@@ -4,18 +4,17 @@
 #include <stdbool.h>
 #include <limits.h>
 
-// Euclid's Algorithm states that if a is the sum of two given numbers and b is the largest of those two numbers and r is the smallest then a / b = a = b * q + r.
-// If we continuosly move over the b value to the a value and r value to the b value until r = 0 then we will have found the GCD of those two given numbers.
-// For this program though we will be stopping once r = 1.
-
 // Structure to hold list of rows
 typedef struct {
     char **rows;
     int num_rows;
 } Pattern;
 
-// int max(int a, int b) { return (a > b) ? a : b; }  // Finds largest number
-// int min(int a, int b) { return (a < b) ? a : b; }  // Finds smallest number
+Pattern createBalancedPattern(int numX, int num0);
+char* concatenateFinalPattern(const Pattern *pattern);
+int getRowLengthDifference(const Pattern *pattern);
+int max(int a, int b);
+int min(int a, int b);
 
 int main() { 
     int numX, num0;
@@ -58,22 +57,83 @@ Pattern createBalancedPattern(int numX, int num0) {
     // ---Step 2: The Balancing Loop---
     while (getRowLengthDifference(&p) > 1) {
         int shortest = INT_MAX;
-        for (int i = 0; i < p.num_rows; i++) { // Finds the lenght of the shortest row
+        for (int i = 0; i < p.num_rows; i++) { // Finds the length of the shortest row
             shortest = min(shortest, strlen(p.rows[i]));
         }
+        int difference = getRowLengthDifference(&p);
+
+        
         int additions_count = 0;
         for (int i = 0; i < p.num_rows; i++) { // Counts how many rows are longer than the shortest
             if (strlen(p.num_rows > shortest)) {
                 additions_count++;
             }
         }
+
+        // Create new pattern to hold transformed rows
+        int new_num_row = p.num_rows + additions_count;
+        Pattern new_p;
+        new_p.num_rows = new_num_row;
+        new_p.num_rows = malloc(new_num_row * sizeof(char*));
+
+        int addition_idx = 0;
+        int trimp_point = max(shortest, difference); // Calculates the new lenght for the long rows we trim
+
+        for (int i = 0; i < p.num_rows; i++) { // Iterates through old pattern p and builds new pattern
+            int current_len = strlen(p.rows[i]);
+            if (current_len > shortest) {
+                // This row is too long so we trim it
+                new_p.rows[i] = malloc(trimp_point + 1);
+                strncpy(new_p.rows, p.rows[i], trimp_point);
+                new_p.rows[i][trimp_point] = '\0';
+
+                // Creates new row from trim
+                int cut_off_len = current_len - trimp_point;
+                new_p.rows[p.num_rows + addition_idx] = malloc(current_len + 1);
+                strcpy(new_p.rows[p.num_rows + addition_idx], p.rows[i] + trimp_point);
+                addition_idx++;
+                } else { // If row was already short enough
+                    new_p.rows[i] = malloc(current_len + 1);
+                    strcpy(new_p.rows[i], p.rows[i]);
+                }
+
+        }
+
+        // Replace old pattern with new balance one.
+        free_pattern(&p); 
+        p = new_p;
     }
-    
 
-
+    return p;
 }
 
+// Step 3: --- Concatenate the balanced pattern---
 
+char* concatenateFinalPattern (const Pattern *pattern) {
+    // First scans to find total number of characters and the length of the longest row
+    int maxColLength = 0, total_chars = 0; 
+    for(int i = 0; i < pattern->num_rows; i++) {
+        int len = strlen(pattern->rows[i]);
+        total_chars += len;
+        if(len > maxColLength) maxColLength = len;
+    }
+    if (total_chars == 0) {
+        char *empty = malloc(1);
+        empty[0] = '\0';
+        return empty;
+    }
+    char *result = malloc(total_chars + 1);
+    int result_idx = 0;
+    for (int col = 0; col < maxColLength; col++) {
+        for (int row = 0; row < pattern->num_rows; row++) {
+            if (col < strlen(pattern->rows[row])) {
+                result[result_idx++] = pattern->rows[row][col];
+            }
+        }
+    }
+    result[result_idx] = '\0';
+    return result;
+}
 
 // Helper Functions
 
@@ -87,3 +147,6 @@ int getRowLengthDifference(const Pattern *pattern) {
     }
     return longest - shortest;
 }
+
+int max(int a, int b) { return (a > b) ? a : b; }  // Finds largest number
+int min(int a, int b) { return (a < b) ? a : b; }  // Finds smallest number
