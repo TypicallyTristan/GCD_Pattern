@@ -144,7 +144,7 @@ char* concatenateFinalPattern (const Pattern *pattern) {
 
 // Helper Functions
 
-int getRowLengthDifference(const Pattern *pattern) {
+int getRowLengthDifference(const Pattern *pattern) {  // Calculates the difference between longest and shortest row
     if(pattern->num_rows < 2) return 0;
     int longest = 0, shortest = INT_MAX;
     for(int i = 0; i < pattern->num_rows; i++) {
@@ -155,7 +155,7 @@ int getRowLengthDifference(const Pattern *pattern) {
     return longest - shortest;
 }
 
-void free_pattern(Pattern *p) {
+void free_pattern(Pattern *p) { // Memory management
     if (!p || !p->rows) return;
     for (int i = 0; i < p->num_rows; i++) {
         free(p->rows);
