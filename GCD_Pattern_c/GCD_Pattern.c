@@ -56,9 +56,19 @@ Pattern createBalancedPattern(int numX, int num0) {
     p.rows[1][min_count] = '\0';
 
     // ---Step 2: The Balancing Loop---
-
-
-
+    while (getRowLengthDifference(&p) > 1) {
+        int shortest = INT_MAX;
+        for (int i = 0; i < p.num_rows; i++) { // Finds the lenght of the shortest row
+            shortest = min(shortest, strlen(p.rows[i]));
+        }
+        int additions_count = 0;
+        for (int i = 0; i < p.num_rows; i++) { // Counts how many rows are longer than the shortest
+            if (strlen(p.num_rows > shortest)) {
+                additions_count++;
+            }
+        }
+    }
+    
 
 
 }
