@@ -18,17 +18,20 @@ int main() {
     int currentCharCount = 0;
 
     printf("How many X's?: ");
-    scanf("%d", &numX);
+        if(scanf("%d", &numX) != 1 || numX < 0) {
+            printf("Invalid input for X's.\n");
+            return 1;
+        }
     printf("How many 0's?: ");
-    scanf("%d", &num0);  
+    if(scanf("%d", &num0) != 1 || num0 < 0) {
+        printf("Invalid input of 0's.\n");
+        return 1;
+    } 
 
     int GCD_b; // Makes sure the b always is the greater of the two numbers
-    if(numX > num0)
-    {
+    if(numX > num0) {
         GCD_b = numX;
-    }
-    else
-    {
+    } else {
         GCD_b = num0;
     }
 
@@ -43,10 +46,6 @@ int main() {
     int GCD_a = numX + num0;
     int GCD_r = GCD_b % GCD_s;
     int GCD_q = numX / num0;
-
-
-    // Create a checker for if the number is negative and not an integer
-
 
     char *result = malloc(GCD_a + 1); // Making sure there's enough room to store 
     make_chars(result, 'X', numX); // Fills beginning with X's
